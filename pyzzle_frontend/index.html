@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="./style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="containerSteps"></div>
+            <div class="gameTable">
+                <div class="rowField">
+                    <div class="field"></div>
+                    <div class="field"></div>
+                    <div class="field"></div>
+                </div>
+                <div class="rowField">
+                    <div class="field"></div>
+                    <div class="field"></div>
+                    <div class="field"></div>
+                </div>
+                <div class="rowField">
+                    <div class="field"></div>
+                    <div class="field"></div>
+                    <div class="field"></div>
+                </div>
+            </div>
+            <p>Moves left: <span id="movesLeft"></span></p>
+            <h3>Izaberite algoritam:</h3>
+            <label class="radio-container">
+                <input type="radio" name="algorithm" value="bfs" checked />
+                <span class="custom-radio"></span>
+                Breadth-First Search
+            </label>
+            <label class="radio-container">
+                <input type="radio" name="algorithm" value="bestfs" checked />
+                <span class="custom-radio"></span>
+                Best-First Search
+            </label>
+
+            <label class="radio-container">
+                <input type="radio" name="algorithm" value="a-star" />
+                <span class="custom-radio"></span>
+                A* Algorithm
+            </label>
+
+            <button id="startBtn">Pokreni igru</button>
+        </div>
+        <script src="./app.js"></script>
+    </body>
+</html>
