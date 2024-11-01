@@ -15,18 +15,35 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: aqua;
+    background-color: #2a6e36; /* Dark green background */
     position: relative;
 }
 
 .gameTable {
     width: 500px;
-    height: 500px;
-    background-color: blanchedalmond;
+    height: 300px;
+    background-image: url("./assets/ninja/gameScreen.jpg");
     display: flex;
+    background-size: cover;
     flex-direction: column;
-    border: 2px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    border: 2px solid #173e1c; /* Dark green border */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+.gameTable::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark overlay for contrast */
+    z-index: 1;
+}
+
+.gameTable > * {
+    position: relative;
+    z-index: 2;
 }
 
 .rowField {
@@ -37,15 +54,23 @@ body {
 
 .field {
     width: 33.33%;
-    height: 100%;
+    height: 98%;
     background-position: center;
     background-size: cover;
-    border: 1px solid #fff;
+    background-repeat: no-repeat;
     transition: background-color 0.3s;
+    margin: 1px;
+    border: 1px solid #2f4f2f; /* Subtle dark green border */
 }
 
 .field:hover {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.1); /* Soft white glow on hover */
+}
+.score {
+    width: 500px;
+    display: none;
+    justify-content: space-between;
+    color: #e2e8d8; /* Light greenish text color */
 }
 
 .containerSteps {
@@ -56,14 +81,15 @@ body {
     height: 100%;
     display: none;
     overflow-y: scroll;
-    background-color: rgba(0, 0, 0, 0.57);
+    background-color: rgba(0, 0, 0, 0.7); /* Darkened overlay for modal */
     z-index: 999;
     padding: 20px;
-    color: white;
+    color: #e2e8d8; /* Light greenish text color */
 }
 
 h3 {
     margin: 20px 0;
+    color: #e2e8d8; /* Light greenish text for headings */
 }
 
 label {
@@ -71,6 +97,7 @@ label {
     align-items: center;
     margin: 5px;
     cursor: pointer;
+    color: #c8d6c8; /* Soft green for labels */
 }
 
 input[type="radio"] {
@@ -81,29 +108,47 @@ input[type="radio"] {
     position: relative;
     padding-left: 30px;
     margin-right: 10px;
+    color: #c8d6c8;
 }
 
 .radio-container input[type="radio"]:checked + .custom-radio {
     background-color: #4caf50;
     border-color: #4caf50;
 }
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    visibility: hidden;
+}
 
+#playStopButton {
+    width: 100px;
+    cursor: pointer;
+}
 .custom-radio {
     position: absolute;
     top: 0;
     left: 0;
     height: 20px;
     width: 20px;
-    border: 2px solid #ccc;
+    border: 2px solid #c8d6c8; /* Border color matches label */
     border-radius: 50%;
-    background-color: white;
+    background-color: #2f4f2f; /* Dark green background for radio */
     transition: background-color 0.3s, border-color 0.3s;
 }
 
 button {
     margin-top: 20px;
     padding: 10px 20px;
-    background-color: #4caf50;
+    background-color: #4caf50; /* Green button */
     color: white;
     border: none;
     border-radius: 5px;
@@ -112,8 +157,9 @@ button {
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #3d8e3c; /* Slightly darker green on hover */
 }
+
 button.loading {
     pointer-events: none;
     position: relative;

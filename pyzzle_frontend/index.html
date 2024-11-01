@@ -5,11 +5,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
         <link rel="stylesheet" href="./style.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        />
     </head>
     <body>
         <div class="container">
             <div class="containerSteps"></div>
+
             <div class="gameTable">
+                <div id="overlay">
+                    <img
+                        id="playStopButton"
+                        src="./assets/images/play.png"
+                        alt="Play Button"
+                    />
+                </div>
                 <div class="rowField">
                     <div class="field"></div>
                     <div class="field"></div>
@@ -26,7 +38,10 @@
                     <div class="field"></div>
                 </div>
             </div>
-            <p>Moves left: <span id="movesLeft"></span></p>
+            <div class="score">
+                <p>Moves left: <span id="movesLeft"></span></p>
+                <p>Nodes explored: <span id="nodesExplored"></span></p>
+            </div>
             <h3>Izaberite algoritam:</h3>
             <label class="radio-container">
                 <input type="radio" name="algorithm" value="bfs" checked />
@@ -45,7 +60,12 @@
                 A* Algorithm
             </label>
 
-            <button id="startBtn">Pokreni igru</button>
+            <button id="startBtn">
+                Pokreni igru <i class="fa-solid fa-play"></i>
+            </button>
+            <button id="shuffleBtn">
+                Izmesaj <i class="fa-solid fa-shuffle"></i>
+            </button>
         </div>
         <script src="./app.js"></script>
     </body>

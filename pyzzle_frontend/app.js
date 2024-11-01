@@ -1,16 +1,16 @@
 const enumImages = {
-    1: "./assets/images/one.jpg",
-    2: "./assets/images/two.jpg",
-    3: "./assets/images/three.jpg",
-    4: "./assets/images/four.jpg",
-    5: "./assets/images/five.jpg",
-    6: "./assets/images/six.jpg",
-    7: "./assets/images/seven.jpg",
-    8: "./assets/images/eight.jpg",
+    1: "./assets/ninja/one.jpg",
+    2: "./assets/ninja/two.jpg",
+    3: "./assets/ninja/three.jpg",
+    4: "./assets/ninja/four.jpg",
+    5: "./assets/ninja/five.jpg",
+    6: "./assets/ninja/six.jpg",
+    7: "./assets/ninja/seven.jpg",
+    8: "./assets/ninja/eight.jpg",
     0: 0,
 };
 let startBtn = document.querySelector("#startBtn");
-
+let shuffleBtn = document.querySelector("#shuffleBtn");
 document.addEventListener("keydown", (event) => {
     if (event.code === "Escape") {
         window.location.reload();
@@ -30,20 +30,31 @@ class CreateGame {
     simulationInterval = 1000;
     idInterval;
     isPlaying = false;
+    simulationStarted = false;
     currentMove = 0;
+    movesLeft;
+    scoreBoard;
     constructor() {
         this.shuffleInitialState();
+        this.overlay = document.getElementById("overlay");
+        this.playStopButton = document.getElementById("playStopButton");
+        this.scoreBoard = document.querySelector(".score");
+        this.movesLeft = document.querySelector("#movesLeft");
+        this.nodesExplored = document.querySelector("#nodesExplored");
         // this.initializeEventListeners();
     }
 
-    async getBfsSolution(initial_state) {
+    async fetchSolution(algorithm, initial_state) {
         try {
             this.loading = true;
-            startBtn = document.getElementById("startBtn");
+            const startBtn = document.getElementById("startBtn");
             startBtn.classList.add("loading");
+            shuffleBtn.classList.add("loading");
+            shuffleBtn.textContent = "Loading...";
             startBtn.textContent = "Loading...";
+
             const response = await fetch(
-                "http://127.0.0.1:8000/game/start-game/",
+                `http://127.0.0.1:8000/game/start-game/${algorithm}`,
                 {
                     method: "POST",
                     headers: {
@@ -59,22 +70,30 @@ class CreateGame {
             }
 
             const data = await response.json();
+            this.simulationStarted = true;
+            this.toggleOverlay();
+            this.scoreBoard.style.display = "flex";
             this.loading = false;
             this.aiSteps = data.steps;
+            this.nodesExplored.innerHTML = data.nodes_explored;
+
+            this.movesLeft.innerHTML = data.steps.length;
             this.currentMove = 0;
         } catch (exception) {
             console.log(exception);
         } finally {
-            startBtn.classList.remove("loading");
-            startBtn.textContent = "Pokreni igru";
+            startBtn.innerHTML = "Simulacija u toku";
+            startBtn.disabled = true;
+            shuffleBtn.innerHTML = "Simulacija u toku";
+            shuffleBtn.disabled = true;
             this.loading = false;
         }
-
         document.addEventListener("keydown", (event) => {
-            console.log(event.code);
             if (event.code === "Space") {
+                this.isPlaying = !this.isPlaying;
+                this.toggleOverlay();
                 this.simulationInterval = 1000;
-                if (this.isPlaying) {
+                if (!this.isPlaying) {
                     clearInterval(this.intervalId);
                     this.isPlaying = false;
                 } else {
@@ -87,14 +106,19 @@ class CreateGame {
             }
         });
     }
-
+    toggleOverlay() {
+        this.overlay.style.visibility =
+            this.simulationStarted && !this.isPlaying ? "visible" : "hidden";
+    }
     startSimulation() {
-        this.isPlaying = true;
         let moving = false;
+        this.toggleOverlay();
         this.intervalId = setInterval(() => {
             if (this.currentMove >= this.aiSteps.length) {
                 clearInterval(this.intervalId);
                 this.isPlaying = false;
+                this.simulationStarted = false;
+                this.playStopButton.src = "./assets/images/play.png";
                 return;
             }
 
@@ -113,12 +137,10 @@ class CreateGame {
                 this.currentState[Math.floor(zeroField / 3)][zeroField % 3],
                 this.currentState[Math.floor(indexToMove / 3)][indexToMove % 3],
             ];
-            console.log(this.currentState);
             this.updateField(Math.floor(indexToMove / 3), indexToMove % 3);
             this.updateField(Math.floor(zeroField / 3), zeroField % 3);
 
             let movesLeft = document.querySelector("#movesLeft");
-            console.log(movesLeft, movesLeft);
             movesLeft.innerText = this.aiSteps.length - this.currentMove - 1;
             this.currentMove++;
             moving = false;
@@ -209,11 +231,18 @@ class CreateGame {
             ? `url(${enumImages[state]})`
             : "none";
 
-        //  comparint it to zero so it doesnt show alert twice
         if (
             state != 0 &&
             this.currentState.toString() == this.initialState.toString()
         ) {
+            clearInterval(this.idInterval);
+            this.toggleOverlay(false);
+            this.isPlaying = false;
+            this.scoreBoard.style.display = "none";
+            startBtn.innerHTML = "Pokreni igru";
+            shuffleBtn.innerHTML = "Izmesaj";
+            startBtn.disabled = false;
+            shuffleBtn.enabled = false;
             alert("Cestitamo !!");
         }
     }
@@ -234,21 +263,33 @@ class CreateGame {
     }
 
     callBfs() {
-        this.getBfsSolution(this.currentState);
+        this.fetchSolution("bfs", this.currentState);
+    }
+    callBestFS() {
+        this.fetchSolution("bestfs", this.currentState);
+    }
+    callAstar() {
+        this.fetchSolution("astar", this.currentState);
     }
 }
 
 const createGame = new CreateGame();
 createGame.createStartTable();
-
+shuffleBtn.addEventListener("click", () => {
+    createGame.shuffleInitialState();
+    createGame.createStartTable();
+});
 startBtn.addEventListener("click", () => {
     let checkedBtn = document.querySelector("input:checked");
     switch (checkedBtn.value) {
         case "bfs":
             createGame.callBfs();
             break;
-        case "a*":
-            // Call A* method if implemented
+        case "bestfs":
+            createGame.callBestFS();
+            break;
+        case "a-star":
+            createGame.callAstar();
             break;
     }
 });
