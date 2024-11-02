@@ -3,6 +3,8 @@ from collections import deque
 from abc import ABC, abstractmethod
 import heapq
 class Algorithm(ABC):
+    def __init__(self,distance="hamming") -> None:
+        self.distance = distance
     @abstractmethod
     def get_steps(self, initial_state, goal_state):
         pass
@@ -33,7 +35,7 @@ class Algorithm(ABC):
         
     # HEURISTIKE
     @staticmethod
-    def manhatn_distance(state):
+    def manhatn_distance(state,goal_state):
         heuristic_sum =0
         for i in range(len(state)):
             for j in range(len(state[0])):
@@ -50,7 +52,16 @@ class Algorithm(ABC):
                 if state[i][j]!=goal_state[i][j] and  state[i][j] != 0:
                     heuristic_sum+=1
         return heuristic_sum
-        
+    
+    def heuristic(self, state, goal_state):
+        if self.distance == "manhattan":
+            return Algorithm.manhatn_distance(state, goal_state)
+        elif self.distance == "hamming":
+            return Algorithm.haming(state, goal_state)
+        else:
+            raise ValueError("Unknown heuristic method.")
+
+
         
 class BFSAlgorithm(Algorithm):
     def get_steps(self, initial_state, goal_state):
@@ -95,10 +106,10 @@ class BestFSAlgorithm(Algorithm):
         return None
 
 
-class AStarAlgorithm(Algorithm):
+class   AStarAlgorithm(Algorithm):
     def get_steps(self, initial_state, goal_state):
         queue = []
-        initial_h = Algorithm.haming(initial_state,goal_state)
+        initial_h = self.heuristic(initial_state,goal_state)
         heapq.heappush(queue, (initial_h,Algorithm.id_linearization(initial_state), 0, initial_state, []))
         visited = set()
         visited.add(tuple(tuple(row) for row in initial_state))
@@ -113,7 +124,7 @@ class AStarAlgorithm(Algorithm):
                 tuple_state = tuple(tuple(row) for row in new_state)
                 if tuple_state not in visited:
                     new_g = g + 1
-                    new_h = Algorithm.haming(new_state,goal_state)
+                    new_h = self.heuristic(new_state,goal_state)
                     new_f = new_g + new_h 
                     heapq.heappush(queue, (new_f, Algorithm.id_linearization(initial_state),new_g, new_state, path + [action]))
                     visited.add(tuple_state)

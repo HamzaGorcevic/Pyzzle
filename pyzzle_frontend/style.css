@@ -165,7 +165,12 @@ button.loading {
     position: relative;
     padding-left: 2rem;
 }
-
+button#stopSimulationBtn {
+    background-color: #af504c;
+}
+#stopSimulationBtn:hover {
+    background-color: #d2322c;
+}
 button.loading::before {
     content: "";
     position: absolute;

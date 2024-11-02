@@ -55,16 +55,25 @@
             </label>
 
             <label class="radio-container">
-                <input type="radio" name="algorithm" value="a-star" />
+                <input type="radio" name="algorithm" value="a-star-manhattan" />
                 <span class="custom-radio"></span>
-                A* Algorithm
+                A* Algorithm Manhattan
+            </label>
+            <label class="radio-container">
+                <input type="radio" name="algorithm" value="a-star-hamming" />
+                <span class="custom-radio"></span>
+                A* Algorithm hamming
             </label>
 
             <button id="startBtn">
                 Pokreni igru <i class="fa-solid fa-play"></i>
             </button>
+
             <button id="shuffleBtn">
                 Izmesaj <i class="fa-solid fa-shuffle"></i>
+            </button>
+            <button id="stopSimulationBtn">
+                Zaustavi simulaciju <i class="fa-solid fa-stop"></i>
             </button>
         </div>
         <script src="./app.js"></script>
