@@ -1,0 +1,52 @@
+# Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Virtual environment directories
+venv/
+.env/
+.venv/
+
+# Django specific
+db.sqlite3
+*.log
+media/
+static/
+
+# PyCharm and other IDEs
+.idea/
+
+# VSCode
+.vscode/
+
+# Coverage directory created by coverage.py
+.coverage
+.coverage.*
+
+# Migrations folder (optional, depends on your workflow)
+migrations/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Django settings files (e.g., sensitive settings)
+settings.py
+local_settings.py
+
+# Secrets (if stored locally)
+*.env
+
+# Ignore test files (if you don't need to track them)
+test/
+tests/
+
+# Dist/Build folders
+build/
+dist/
+*.egg-info/
+
+# System files
+.DS_Store
+Thumbs.db

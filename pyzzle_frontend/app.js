@@ -46,6 +46,7 @@ class CreateGame {
 
     async fetchSolution(algorithm, initial_state) {
         try {
+            this.isPlaying = true;
             this.loading = true;
             const startBtn = document.getElementById("startBtn");
             startBtn.classList.add("loading");
@@ -54,7 +55,7 @@ class CreateGame {
             startBtn.textContent = "Loading...";
 
             const response = await fetch(
-                `http://127.0.0.1:8000/game/start-game/${algorithm}`,
+                `https://pyzzlebackend.onrender.com/game/start-game/${algorithm}`,
                 {
                     method: "POST",
                     headers: {
@@ -201,7 +202,7 @@ class CreateGame {
         const fields = document.querySelectorAll(".field");
         fields.forEach((field) => {
             field.addEventListener("click", (e) => {
-                if (!this.simulationStarted) {
+                if (!this.isPlaying) {
                     const classList = Array.from(e.target.classList);
                     const posClass = classList.find((className) =>
                         className.startsWith("pos-")
