@@ -42,7 +42,6 @@ class CreateGame {
         this.scoreBoard = document.querySelector(".score");
         this.movesLeft = document.querySelector("#movesLeft");
         this.nodesExplored = document.querySelector("#nodesExplored");
-        // this.initializeEventListeners();
     }
 
     async fetchSolution(algorithm, initial_state) {
@@ -140,7 +139,6 @@ class CreateGame {
                 clearInterval(this.intervalId);
                 this.isPlaying = false;
                 this.simulationStarted = false;
-                this.simulationStarted = false;
                 this.playStopButton.src = "./assets/images/play.png";
                 return;
             }
@@ -150,18 +148,10 @@ class CreateGame {
             moving = true;
             const indexToMove = this.aiSteps[this.currentMove];
 
-            const zeroField = this.domFields.findIndex(
-                (field) => field.getAttribute("data-value") == 0
-            );
-            [
-                this.currentState[Math.floor(indexToMove / 3)][indexToMove % 3],
-                this.currentState[Math.floor(zeroField / 3)][zeroField % 3],
-            ] = [
-                this.currentState[Math.floor(zeroField / 3)][zeroField % 3],
-                this.currentState[Math.floor(indexToMove / 3)][indexToMove % 3],
-            ];
-            this.updateField(Math.floor(indexToMove / 3), indexToMove % 3);
-            this.updateField(Math.floor(zeroField / 3), zeroField % 3);
+            const x = Math.floor(indexToMove / 3);
+            const y = indexToMove % 3;
+
+            this.moveField(x, y);
 
             let movesLeft = document.querySelector("#movesLeft");
             movesLeft.innerText = this.aiSteps.length - this.currentMove - 1;
@@ -207,14 +197,23 @@ class CreateGame {
         this.simulationStarted = false;
     }
 
-    // initializeEventListeners() {
-    //     const fields = document.querySelectorAll(".field");
-    //     fields.forEach((field, index) => {
-    //         const row = Math.floor(index / 3);
-    //         const col = index % 3;
-    //         field.addEventListener("click", () => this.moveField(row, col));
-    //     });
-    // }
+    initializeEventListeners() {
+        const fields = document.querySelectorAll(".field");
+        fields.forEach((field) => {
+            field.addEventListener("click", (e) => {
+                if (!this.simulationStarted) {
+                    const classList = Array.from(e.target.classList);
+                    const posClass = classList.find((className) =>
+                        className.startsWith("pos-")
+                    );
+                    if (posClass) {
+                        const [x, y] = posClass.split("-").slice(1).map(Number);
+                        this.moveField(x, y);
+                    }
+                }
+            });
+        });
+    }
 
     moveField(x, y) {
         const directions = [
@@ -223,11 +222,9 @@ class CreateGame {
             [-1, 0],
             [0, -1],
         ];
-
         for (let [dx, dy] of directions) {
             const newX = x + dx;
             const newY = y + dy;
-
             if (
                 newX >= 0 &&
                 newX < this.currentState.length &&
@@ -235,32 +232,26 @@ class CreateGame {
                 newY < this.currentState[0].length &&
                 this.currentState[newX][newY] === 0
             ) {
-                [this.currentState[x][y], this.currentState[newX][newY]] = [
-                    this.currentState[newX][newY],
-                    this.currentState[x][y],
-                ];
-
-                this.updateField(x, y);
-                this.updateField(newX, newY);
+                this.updateField(x, y, newX, newY);
                 return;
             }
         }
     }
+    updateField(x, y, newX, newY) {
+        [this.currentState[x][y], this.currentState[newX][newY]] = [
+            this.currentState[newX][newY],
+            this.currentState[x][y],
+        ];
 
-    updateField(x, y) {
-        const index = x * 3 + y;
-        const fields = document.querySelectorAll(".field");
-        const field = fields[index];
-        const state = this.currentState[x][y];
-        field.setAttribute("data-value", state);
-        field.style.backgroundImage = state
-            ? `url(${enumImages[state]})`
-            : "none";
+        const fieldChosen = document.querySelector(`.field.pos-${x}-${y}`);
+        const fieldZero = document.querySelector(`.field.pos-${newX}-${newY}`);
 
-        if (
-            state != 0 &&
-            this.currentState.toString() == this.initialState.toString()
-        ) {
+        fieldChosen.classList.remove(`pos-${x}-${y}`);
+        fieldChosen.classList.add(`pos-${newX}-${newY}`);
+        fieldZero.classList.remove(`pos-${newX}-${newY}`);
+        fieldZero.classList.add(`pos-${x}-${y}`);
+
+        if (this.checkIfSolved()) {
             clearInterval(this.idInterval);
             document.removeEventListener("keydown", this.controls);
 
@@ -278,19 +269,32 @@ class CreateGame {
         }
     }
 
+    checkIfSolved() {
+        return this.currentState.toString() === this.initialState.toString();
+    }
+
     createStartTable() {
         this.domFields = Array.from(document.querySelectorAll(".field"));
         for (let i = 0; i < this.currentState.length; i++) {
             for (let j = 0; j < this.currentState[0].length; j++) {
                 const index = i * this.currentState[0].length + j;
                 const field = this.domFields[index];
-                const state = this.currentState[i][j];
-                field.style.backgroundImage = state
-                    ? `url(${enumImages[state]})`
-                    : "none";
-                field.setAttribute("data-value", state);
+
+                field.style.backgroundImage =
+                    this.currentState[i][j] != 0
+                        ? `url(${enumImages[this.currentState[i][j]]})`
+                        : "none";
+
+                field.classList.forEach((className) => {
+                    if (className.startsWith("pos-")) {
+                        field.classList.remove(className);
+                    }
+                });
+
+                field.classList.add(`pos-${i}-${j}`);
             }
         }
+        this.initializeEventListeners();
     }
     stopSimulation() {
         this.isPlaying = false;
