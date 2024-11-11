@@ -141,9 +141,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cors
 CORS_ALLOW_ALL_ORIGINS = True
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:5500',"https://pyzzle.onrender.com","pyzzlebackend.onrender.com"]
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:5500', 'http://localhost:5500',"https://pyzzle.onrender.com","pyzzlebackend.onrender.com"]
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
+    'https://pyzzle.onrender.com',
+    'https://pyzzlebackend.onrender.com'
+]
 
 CORS_ALLOW_METHODS = [
     "GET",
