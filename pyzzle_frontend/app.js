@@ -11,7 +11,7 @@ const enumImages = {
 };
 let startBtn = document.querySelector("#startBtn");
 let shuffleBtn = document.querySelector("#shuffleBtn");
-let stopSimulationBtn = document.querySelector("#stopSimulationBtn");
+let endSimulationBtn = document.querySelector("#endSimulationBtn");
 document.addEventListener("keydown", (event) => {
     if (event.code === "Escape") {
         window.location.reload();
@@ -50,9 +50,11 @@ class CreateGame {
             this.loading = true;
             const startBtn = document.getElementById("startBtn");
             startBtn.classList.add("loading");
+            endSimulationBtn.classList.add("loading");
             shuffleBtn.classList.add("loading");
             shuffleBtn.textContent = "Loading...";
             startBtn.textContent = "Loading...";
+            endSimulationBtn.textContent = "Loading ...";
 
             const response = await fetch(
                 `https://pyzzlebackend.onrender.com/game/start-game/${algorithm}`,
@@ -69,12 +71,16 @@ class CreateGame {
                 console.error("Failed to fetch solution", response.statusText);
                 return;
             }
+            endSimulationBtn.innerHTML = "Zaustavi simulaciju";
+            endSimulationBtn.classList.remove("loading");
 
             const data = await response.json();
             if (data.steps == 0) {
                 startBtn.classList.remove("loading");
+                endSimulationBtn.classList.remove("loading");
                 shuffleBtn.classList.remove("loading");
                 shuffleBtn.textContent = "Izmesaj";
+                endSimulationBtn.innerHTML = "Zaustavi simulaciju";
                 startBtn.textContent = "Pokreni igru";
                 return;
             }
@@ -104,6 +110,7 @@ class CreateGame {
         if (!this.simulationStarted) return;
 
         if (event.code === "Space") {
+            endSimulationBtn.disabled = !this.isPlaying;
             this.simulationInterval = 1000;
             this.isPlaying = !this.isPlaying;
             this.toggleOverlay();
@@ -264,9 +271,72 @@ class CreateGame {
             shuffleBtn.innerHTML = "Izmesaj";
             startBtn.classList.remove("loading");
             shuffleBtn.classList.remove("loading");
+
             startBtn.disabled = false;
             shuffleBtn.disabled = false;
-            alert("Cestitamo !!");
+
+            // Show success message in overlay
+            this.showSuccessMessage();
+        }
+    }
+
+    // end game message
+    showSuccessMessage() {
+        const modal = document.createElement("div");
+        modal.classList.add("modal");
+        const successMessage = document.createElement("p");
+        successMessage.innerHTML = "Čestitamo! <br> Rešili ste puzzle!";
+
+        modal.appendChild(successMessage);
+
+        const closeButton = document.createElement("button");
+        closeButton.innerHTML = "Close";
+
+        modal.appendChild(closeButton);
+
+        document.body.appendChild(modal);
+
+        const bgEffect = document.createElement("div");
+        bgEffect.classList.add("bgEffect");
+
+        closeButton.addEventListener("click", () => {
+            modal.style.visibility = "hidden";
+            bgEffect.style.visibility = "hidden";
+        });
+
+        document.body.appendChild(bgEffect);
+    }
+
+    updateField(x, y, newX, newY) {
+        [this.currentState[x][y], this.currentState[newX][newY]] = [
+            this.currentState[newX][newY],
+            this.currentState[x][y],
+        ];
+
+        const fieldChosen = document.querySelector(`.field.pos-${x}-${y}`);
+        const fieldZero = document.querySelector(`.field.pos-${newX}-${newY}`);
+
+        fieldChosen.classList.remove(`pos-${x}-${y}`);
+        fieldChosen.classList.add(`pos-${newX}-${newY}`);
+        fieldZero.classList.remove(`pos-${newX}-${newY}`);
+        fieldZero.classList.add(`pos-${x}-${y}`);
+
+        if (this.checkIfSolved()) {
+            clearInterval(this.idInterval);
+            document.removeEventListener("keydown", this.controls);
+
+            this.toggleOverlay(false);
+            this.isPlaying = false;
+            this.simulationStarted = false;
+            this.scoreBoard.style.display = "none";
+            startBtn.innerHTML = "Pokreni igru";
+            shuffleBtn.innerHTML = "Izmesaj";
+            startBtn.classList.remove("loading");
+            shuffleBtn.classList.remove("loading");
+
+            startBtn.disabled = false;
+            shuffleBtn.disabled = false;
+            this.showSuccessMessage();
         }
     }
 
@@ -297,9 +367,10 @@ class CreateGame {
         }
         this.initializeEventListeners();
     }
-    stopSimulation() {
+    endSimulation() {
+        this.simulationStarted = false;
         this.isPlaying = false;
-        this.simulationStarted = startBtn;
+        clearInterval(this.idInterval);
         this.toggleOverlay(false);
         startBtn.classList.remove("loading");
         shuffleBtn.classList.remove("loading");
@@ -307,7 +378,6 @@ class CreateGame {
         startBtn.textContent = "Pokreni igru";
         startBtn.disabled = false;
         shuffleBtn.disabled = false;
-        clearInterval(this.idInterval);
     }
 
     callBfs() {
@@ -326,8 +396,8 @@ class CreateGame {
 
 const createGame = new CreateGame();
 createGame.createStartTable();
-stopSimulationBtn.addEventListener("click", () => {
-    createGame.stopSimulation();
+endSimulationBtn.addEventListener("click", () => {
+    createGame.endSimulation();
 });
 shuffleBtn.addEventListener("click", () => {
     createGame.shuffleInitialState();

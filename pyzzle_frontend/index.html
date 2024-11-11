@@ -9,6 +9,12 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Hubot+Sans:ital,wght@0,200..900;1,200..900&display=swap"
+            rel="stylesheet"
+        />
     </head>
     <body>
         <div class="container">
@@ -16,6 +22,8 @@
 
             <div class="gameTable">
                 <div id="overlay">
+                    <p>Press space to continue</p>
+                    <p>Press enter to finish</p>
                     <img
                         id="playStopButton"
                         src="./assets/images/play.png"
@@ -56,13 +64,13 @@
             <label class="radio-container">
                 <input type="radio" name="algorithm" value="a-star-hamming" />
                 <span class="custom-radio"></span>
-                A* Algorithm hamming
+                A* Algorithm Hamming
             </label>
 
             <button id="startBtn">Pokreni igru</button>
 
             <button id="shuffleBtn">Izmesaj</button>
-            <button id="stopSimulationBtn">Zaustavi simulaciju</button>
+            <button id="endSimulationBtn">Zaustavi simulaciju</button>
         </div>
         <script type="text/javascript" src="./app.js"></script>
     </body>
