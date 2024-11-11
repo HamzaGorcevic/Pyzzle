@@ -35,7 +35,7 @@ SECRET_KEY = 'django-insecure-8uc0^jj+pl^_$6ev90+4b+mldy+wxt)yiu8l2f6y%*=w5mo*+f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['pyzzlebackend.onrender.com', 'pyzzle.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -141,9 +141,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Cors
 CORS_ALLOW_ALL_ORIGINS = True
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:5500',"https://pyzzle.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:5500',"https://pyzzle.onrender.com","pyzzlebackend.onrender.com"]
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:5500', 'http://localhost:5500',"https://pyzzle.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:5500', 'http://localhost:5500',"https://pyzzle.onrender.com","pyzzlebackend.onrender.com"]
 
 CORS_ALLOW_METHODS = [
     "GET",
