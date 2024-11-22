@@ -44,9 +44,24 @@ class CreateGame {
         this.nodesExplored = document.querySelector("#nodesExplored");
         this.gameTable = document.querySelector(".gameTable");
     }
-
+    areMatricesEqual(matrix1, matrix2) {
+    
+        for (let i = 0; i < matrix1.length; i++) {
+            if (matrix1[i].length !== matrix2[i].length) return false;
+    
+            for (let j = 0; j < matrix1[i].length; j++) {
+                if (matrix1[i][j] !== matrix2[i][j]) return false;
+            }
+        }
+    
+        return true;
+    }
+    
     async fetchSolution(algorithm, initial_state) {
         try {
+            if(this.areMatricesEqual(initial_state,this.initialState)){
+                return;
+            }
             this.isPlaying = true;
             this.loading = true;
             const startBtn = document.getElementById("startBtn");
