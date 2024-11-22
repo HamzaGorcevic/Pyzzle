@@ -18,6 +18,7 @@ body {
     align-items: center;
     background-color: #2a6e36; /* Dark green background */
     position: relative;
+    padding-top: 50px;
 }
 
 .gameTable {
@@ -180,7 +181,6 @@ input[type="radio"] {
     color: #e2e8d8; /* Light greenish text */
     font-size: 1.2rem;
     margin: 0;
-    text-align: center;
     padding: 10px;
     opacity: 0.8;
     transition: opacity 0.3s ease;
@@ -189,31 +189,52 @@ input[type="radio"] {
 }
 
 #overlay p:nth-of-type(1) {
-    top: 15%;
+    top: 2%;
     font-size: 1.5rem;
     font-weight: bold;
 }
 
 #overlay p:nth-of-type(2) {
-    top: 25%;
+    top: 15%;
 }
 
 #overlay img {
     position: absolute;
-    bottom: 30%;
     width: 80px;
     cursor: pointer;
     transition: transform 0.3s ease;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-#overlay img:hover {
-    transform: scale(1.1);
+#overlay .loading-spinner {
+    visibility: hidden !important;
 }
 
 #playStopButton {
     width: 100px;
     cursor: pointer;
 }
+
+#overlay.loading-overlay .loading-spinner {
+    visibility: visible !important;
+}
+.loading-spinner {
+    width: 100px;
+    height: 100px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #000;
+    border-radius: 50%;
+    animation: spin-overlay 1s linear infinite;
+    z-index: 10;
+}
+#overlay.loading-overlay p,
+#overlay.loading-overlay img {
+    display: none;
+}
+
+
+
 .custom-radio {
     position: absolute;
     top: 0;
@@ -266,14 +287,6 @@ button.loading::before {
     animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-    from {
-        transform: translateY(-50%) rotate(0deg);
-    }
-    to {
-        transform: translateY(-50%) rotate(360deg);
-    }
-}
 
 /* end message */
 
@@ -324,4 +337,87 @@ button.loading::before {
 
 .modal button:hover {
     background-color: #45a049;
+}
+
+
+/* Ensure overlay takes full space during loading-overlay */
+
+@keyframes spin-overlay {
+    from {
+        transform:  rotate(0deg);
+    }
+    to {
+        transform:  rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: translateY(-50%) rotate(0deg);
+    }
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 30px;
+    }
+
+    .gameTable {
+        width: 100%; /* Make it full width on smaller screens */
+        height: 300px; /* Adjust height proportionally */
+        border: 1px solid #173e1c;
+    }
+
+
+    #overlay p {display: none;}
+
+    .score {
+        width: 100%; /* Ensure score fits within the container */
+        font-size: 0.9rem; /* Slightly smaller text */
+    }
+
+    .containerSteps {
+        padding: 10px; /* Reduce padding */
+        font-size: 0.85rem; /* Adjust text size for readability */
+    }
+
+    h3 {
+        font-size: 1.2rem; /* Smaller heading size */
+    }
+
+    label {
+        font-size: 0.9rem; /* Smaller label font */
+    }
+
+    #overlay p {
+        font-size: 1rem; /* Adjust text size */
+    }
+
+    #overlay img {
+        bottom: 20%; /* Adjust positioning */
+        width: 60px; /* Smaller image size */
+    }
+
+    button {
+        padding: 8px 16px; /* Smaller buttons */
+        font-size: 0.9rem;
+    }
+
+    .modal {
+        width: 90%; /* Reduce modal width for smaller screens */
+        padding: 15px;
+    }
+
+    .modal p {
+        font-size: 1.2rem; /* Smaller modal text */
+    }
+
+    .modal button {
+        padding: 8px 16px;
+    }
 }

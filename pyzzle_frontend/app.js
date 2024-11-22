@@ -42,6 +42,7 @@ class CreateGame {
         this.scoreBoard = document.querySelector(".score");
         this.movesLeft = document.querySelector("#movesLeft");
         this.nodesExplored = document.querySelector("#nodesExplored");
+        this.gameTable = document.querySelector(".gameTable");
     }
 
     async fetchSolution(algorithm, initial_state) {
@@ -55,6 +56,8 @@ class CreateGame {
             shuffleBtn.textContent = "Loading...";
             startBtn.textContent = "Loading...";
             endSimulationBtn.textContent = "Loading ...";
+            this.overlay.style.visibility = "visible"
+            this.overlay.classList.add("loading-overlay");
 
             const response = await fetch(
                 `https://pyzzlebackend.onrender.com/game/start-game/${algorithm}`,
@@ -73,6 +76,8 @@ class CreateGame {
             }
             endSimulationBtn.innerHTML = "Zaustavi simulaciju";
             endSimulationBtn.classList.remove("loading");
+            this.overlay.style.visibility = "hidden"
+            this.overlay.classList.remove("loading-overlay");
 
             const data = await response.json();
             if (data.steps == 0) {
@@ -102,6 +107,7 @@ class CreateGame {
             shuffleBtn.disabled = true;
             this.loading = false;
             document.addEventListener("keydown", this.controls);
+            this.gameTable.addEventListener("click",this.controls);
         } catch (exception) {
             console.log(exception);
         }
@@ -109,7 +115,7 @@ class CreateGame {
     controls = (event) => {
         if (!this.simulationStarted) return;
 
-        if (event.code === "Space") {
+        if (event.code === "Space" || event.type =="click") {
             endSimulationBtn.disabled = !this.isPlaying;
             this.simulationInterval = 1000;
             this.isPlaying = !this.isPlaying;
