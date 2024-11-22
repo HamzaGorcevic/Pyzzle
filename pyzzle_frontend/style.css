@@ -222,8 +222,8 @@ input[type="radio"] {
 .loading-spinner {
     width: 100px;
     height: 100px;
-    border: 5px solid rgba(0, 0, 0, 0.1);
-    border-top: 5px solid #000;
+    border: 5px solid rgba(255, 252, 252, 0.1);
+    border-top: 5px solid #ffffff;
     border-radius: 50%;
     animation: spin-overlay 1s linear infinite;
     z-index: 10;
@@ -362,17 +362,17 @@ button.loading::before {
 
 
 /* Mobile adjustments */
-@media (max-width: 768px) {
+@media (max-width: 568px) {
     .container {
         padding: 30px;
     }
 
     .gameTable {
-        width: 100%; /* Make it full width on smaller screens */
-        height: 300px; /* Adjust height proportionally */
+        width: 350px; /* Full width */
+        height: 220px; /* 70% of the width */
         border: 1px solid #173e1c;
     }
-
+    
 
     #overlay p {display: none;}
 
