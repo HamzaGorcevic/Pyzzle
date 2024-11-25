@@ -60,7 +60,7 @@ class CreateGame {
     async fetchSolution(algorithm, initial_state) {
         const primaryServer = `https://pyzzlebackend.onrender.com/game/start-game/${algorithm}`;
         const fallbackServer = `https://pyzzlebackend1.onrender.com/game/start-game/${algorithm}`;
-        const timeoutDuration = 5000; // Timeout set to 5 seconds
+        const timeoutDuration = 15000;
     
         const timeout = new Promise((_, reject) =>
             setTimeout(() => reject(new Error("Request timed out")), timeoutDuration)
