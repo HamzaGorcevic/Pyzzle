@@ -41,10 +41,12 @@ class Algorithm(ABC):
             for j in range(len(state[0])):
                 value = state[i][j]
                 if value !=0:
+                    # this will return row as target_i, and modul will be column target_j
                     target_i,target_j = divmod(value,len(state))
                     heuristic_sum+= abs(i-target_i) + abs(j-target_j)
         return heuristic_sum
     @staticmethod
+    #checking for those wich are in their place
     def haming(state,goal_state):
         heuristic_sum =0
         for i in range(len(state)):

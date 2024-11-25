@@ -23,7 +23,7 @@ body {
 
 .gameTable {
     width: 500px;
-    height: 300px;
+    min-height: 300px;
     background-image: url("./assets/ninja/gameScreen.jpg");
     display: flex;
     background-size: cover;
@@ -369,7 +369,7 @@ button.loading::before {
 
     .gameTable {
         width: 350px; /* Full width */
-        height: 220px; /* 70% of the width */
+        min-height: 220px; /* 70% of the width */
         border: 1px solid #173e1c;
     }
     
