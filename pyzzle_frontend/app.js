@@ -58,10 +58,29 @@ class CreateGame {
     }
     
     async fetchSolution(algorithm, initial_state) {
+        const primaryServer = `https://pyzzlebackend.onrender.com/game/start-game/${algorithm}`;
+        const fallbackServer = `https://pyzzlebackend1.onrender.com/game/start-game/${algorithm}`;
+        const timeoutDuration = 5000; // Timeout set to 5 seconds
+    
+        const timeout = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Request timed out")), timeoutDuration)
+        );
+    
+        const makeRequest = async (url) => {
+            return fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ initial_state }),
+            });
+        };
+    
         try {
-            if(this.areMatricesEqual(initial_state,this.initialState)){
+            if (this.areMatricesEqual(initial_state, this.initialState)) {
                 return;
             }
+    
             this.isPlaying = true;
             this.loading = true;
             const startBtn = document.getElementById("startBtn");
@@ -71,31 +90,32 @@ class CreateGame {
             shuffleBtn.textContent = "Loading...";
             startBtn.textContent = "Loading...";
             endSimulationBtn.textContent = "Loading ...";
-            this.overlay.style.visibility = "visible"
+            this.overlay.style.visibility = "visible";
             this.overlay.classList.add("loading-overlay");
-
-            const response = await fetch(
-                `https://pyzzlebackend.onrender.com/game/start-game/${algorithm}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ initial_state }),
-                }
-            );
-
+    
+            // Attempt request to the primary server
+            let response;
+            try {
+                response = await Promise.race([makeRequest(primaryServer), timeout]);
+            } catch (error) {
+                console.warn(`Primary server failed: ${error.message}`);
+                // Fallback to the secondary server
+                response = await makeRequest(fallbackServer);
+            }
+    
             if (!response.ok) {
                 console.error("Failed to fetch solution", response.statusText);
                 return;
             }
+    
             endSimulationBtn.innerHTML = "Zaustavi simulaciju";
             endSimulationBtn.classList.remove("loading");
-            this.overlay.style.visibility = "hidden"
+            this.overlay.style.visibility = "hidden";
             this.overlay.classList.remove("loading-overlay");
-
+    
             const data = await response.json();
-            if (data.steps == 0) {
+    
+            if (data.steps === 0) {
                 startBtn.classList.remove("loading");
                 endSimulationBtn.classList.remove("loading");
                 shuffleBtn.classList.remove("loading");
@@ -104,10 +124,11 @@ class CreateGame {
                 startBtn.textContent = "Pokreni igru";
                 return;
             }
+    
             this.simulationStarted = true;
             this.isPlaying = false;
             this.toggleOverlay();
-
+    
             this.scoreBoard.style.display = "flex";
             this.loading = false;
             this.aiSteps = data.steps;
@@ -122,11 +143,12 @@ class CreateGame {
             shuffleBtn.disabled = true;
             this.loading = false;
             document.addEventListener("keydown", this.controls);
-            this.gameTable.addEventListener("click",this.controls);
+            this.gameTable.addEventListener("click", this.controls);
         } catch (exception) {
             console.log(exception);
         }
     }
+    
     controls = (event) => {
         if (!this.simulationStarted) return;
 
