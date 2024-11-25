@@ -58,24 +58,8 @@ class CreateGame {
     }
     
     async fetchSolution(algorithm, initial_state) {
-        const primaryServer = `https://pyzzlebackend.onrender.com/game/start-game/${algorithm}`;
-        const fallbackServer = `https://pyzzlebackend1.onrender.com/game/start-game/${algorithm}`;
-        const timeoutDuration = 15000;
-    
-        const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Request timed out")), timeoutDuration)
-        );
-    
-        const makeRequest = async (url) => {
-            return fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ initial_state }),
-            });
-        };
-    
+        const url = `http://127.0.0.1:8000/game/start-game/${algorithm}`;
+
         try {
             if (this.areMatricesEqual(initial_state, this.initialState)) {
                 return;
@@ -93,15 +77,14 @@ class CreateGame {
             this.overlay.style.visibility = "visible";
             this.overlay.classList.add("loading-overlay");
     
-            // Attempt request to the primary server
-            let response;
-            try {
-                response = await Promise.race([makeRequest(primaryServer), timeout]);
-            } catch (error) {
-                console.warn(`Primary server failed: ${error.message}`);
-                // Fallback to the secondary server
-                response = await makeRequest(fallbackServer);
-            }
+
+            let response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ initial_state }),
+            });
     
             if (!response.ok) {
                 console.error("Failed to fetch solution", response.statusText);
@@ -426,8 +409,11 @@ class CreateGame {
     callBfs() {
         this.fetchSolution("bfs", this.currentState);
     }
-    callBestFS() {
-        this.fetchSolution("bestfs", this.currentState);
+    callBestFSManhattan() {
+        this.fetchSolution("bestfs-manhattan", this.currentState);
+    }
+    callBestFSHamming() {
+        this.fetchSolution("bestfs-hamming", this.currentState);
     }
     callAstarHamming() {
         this.fetchSolution("astar-hamming", this.currentState);
@@ -452,8 +438,11 @@ startBtn.addEventListener("click", () => {
         case "bfs":
             createGame.callBfs();
             break;
-        case "bestfs":
-            createGame.callBestFS();
+        case "bestfs-manhattan":
+            createGame.callBestFSManhattan();
+            break;
+        case "bestfs-hamming":
+            createGame.callBestFSHamming();
             break;
         case "a-star-hamming":
             createGame.callAstarHamming();

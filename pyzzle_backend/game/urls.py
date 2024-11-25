@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import *
+from .views import start_game
+
 urlpatterns = [
-    path("start-game/bfs",start_bfs_game,name="BFS"),
-    path("start-game/bestfs",start_bestfs_game,name="Best first search"),
-    path("start-game/astar-manhattan",start_astar_manhattan_game,name="Astar manhattan"),
-    path("start-game/astar-hamming",start_astar_hamming_game,name="Astar hamming")
-
-
+    path("start-game/bfs", start_game, {"algorithm": "BFS"}, name="BFS"),
+    path("start-game/bestfs-manhattan", start_game, {"algorithm": "BestFS", "heuristic": "manhattan"}, name="BestFS Manhattan"),
+    path("start-game/bestfs-hamming", start_game, {"algorithm": "BestFS", "heuristic": "hamming"}, name="BestFS Hamming"),
+    path("start-game/astar-manhattan", start_game, {"algorithm": "AStar", "heuristic": "manhattan"}, name="AStar Manhattan"),
+    path("start-game/astar-hamming", start_game, {"algorithm": "AStar", "heuristic": "hamming"}, name="AStar Hamming"),
 ]

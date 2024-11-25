@@ -1,50 +1,24 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .algorithms import *
 from django.views.decorators.csrf import csrf_exempt
 from json import loads
+from .algorithms import *
+
 @csrf_exempt
-def start_bfs_game(request):
+def start_game(request, algorithm, heuristic=None):
     if request.method == "POST":
         goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
         body = loads(request.body)
-        bfs_algorithm = BFSAlgorithm()
-        response,nodes_explored = bfs_algorithm.get_steps(body.get("initial_state"), goal_state)
-
-        return JsonResponse({"steps": response,"nodes_explored":nodes_explored})
+        if algorithm == "BFS":
+            algo_instance = BFSAlgorithm()
+        elif algorithm == "BestFS":
+            algo_instance = BestFSAlgorithm(heuristic)
+        elif algorithm == "AStar":
+            algo_instance = AStarAlgorithm(heuristic)
+        else:
+            return JsonResponse({"error": "Invalid algorithm."}, status=400)
+        
+        response, nodes_explored = algo_instance.get_steps(body.get("initial_state"), goal_state)
+        return JsonResponse({"steps": response, "nodes_explored": nodes_explored})
     else:
-        return JsonResponse({"error": "Invalid request method. Use GET."}, status=400)
-@csrf_exempt
-def start_bestfs_game(request):
-    if request.method == "POST":
-        goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
-        body = loads(request.body)
-        bestfs_algorithm = BestFSAlgorithm()
-        response,nodes_explored = bestfs_algorithm.get_steps(body.get("initial_state"), goal_state)
-
-        return JsonResponse({"steps": response,"nodes_explored":nodes_explored})
-    else:
-        return JsonResponse({"error": "Invalid request method. Use GET."}, status=400)
-    
-@csrf_exempt
-def start_astar_manhattan_game(request):
-    if request.method == "POST":
-        goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
-        body = loads(request.body)
-        bestfs_algorithm = AStarAlgorithm("manhattan")
-        response,nodes_explored = bestfs_algorithm.get_steps(body.get("initial_state"), goal_state)
-
-        return JsonResponse({"steps": response,"nodes_explored":nodes_explored})
-    else:
-        return JsonResponse({"error": "Invalid request method. Use GET."}, status=400)
-@csrf_exempt
-def start_astar_hamming_game(request):
-    if request.method == "POST":
-        goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
-        body = loads(request.body)
-        bestfs_algorithm = AStarAlgorithm("hamming")
-        response,nodes_explored = bestfs_algorithm.get_steps(body.get("initial_state"), goal_state)
-
-        return JsonResponse({"steps": response,"nodes_explored":nodes_explored})
-    else:
-        return JsonResponse({"error": "Invalid request method. Use GET."}, status=400)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=400)

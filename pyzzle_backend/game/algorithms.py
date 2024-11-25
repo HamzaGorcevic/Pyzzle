@@ -89,7 +89,7 @@ class BFSAlgorithm(Algorithm):
 class BestFSAlgorithm(Algorithm):
     def get_steps(self, initial_state, goal_state):
         queue = []
-        initial_h = Algorithm.haming(initial_state,goal_state)
+        initial_h = self.heuristic(initial_state,goal_state)
         heapq.heappush(queue, (initial_h,Algorithm.id_linearization(initial_state), initial_state, []))
         visited = set()
         visited.add(tuple(tuple(row) for row in initial_state))
@@ -102,7 +102,7 @@ class BestFSAlgorithm(Algorithm):
             for new_state, action in Algorithm.possible_paths(current_state):
                 tuple_state = tuple(tuple(row) for row in new_state)
                 if tuple_state not in visited:
-                    new_h = Algorithm.haming(new_state,goal_state)
+                    new_h = self.heuristic(new_state,goal_state)
                     heapq.heappush(queue, (new_h, Algorithm.id_linearization(new_state),new_state, path + [action]))
                     visited.add(tuple_state)
         return None
