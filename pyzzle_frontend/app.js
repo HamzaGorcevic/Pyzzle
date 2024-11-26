@@ -58,7 +58,7 @@ class CreateGame {
     }
     
     async fetchSolution(algorithm, initial_state) {
-        const url = `http://127.0.0.1:8000/game/start-game/${algorithm}`;
+        const url = `https://pyzzlebackend.onrender.com/game/start-game/${algorithm}`;
 
         try {
             if (this.areMatricesEqual(initial_state, this.initialState)) {
