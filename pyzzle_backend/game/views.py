@@ -5,6 +5,11 @@ from json import loads
 from .algorithms import *
 
 @csrf_exempt
+def keep_alive():
+    return JsonResponse({"status":"active"})
+
+
+@csrf_exempt
 def start_game(request, algorithm, heuristic=None):
     if request.method == "POST":
         goal_state = tuple([1,2,3,4,5,6,7,8,0])
