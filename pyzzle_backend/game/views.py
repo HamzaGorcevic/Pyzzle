@@ -5,7 +5,7 @@ from json import loads
 from .algorithms import *
 
 @csrf_exempt
-def keep_alive():
+def keep_alive(request):
     return JsonResponse({"status":"active"})
 
 
