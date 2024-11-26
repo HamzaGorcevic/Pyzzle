@@ -11,7 +11,7 @@ body {
 
 .container {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -19,6 +19,7 @@ body {
     background-color: #2a6e36; /* Dark green background */
     position: relative;
     padding-top: 50px;
+    padding-bottom: 50px;
 }
 
 .gameTable {
