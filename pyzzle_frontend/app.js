@@ -43,20 +43,20 @@ class CreateGame {
         this.movesLeft = document.querySelector("#movesLeft");
         this.nodesExplored = document.querySelector("#nodesExplored");
         this.gameTable = document.querySelector(".gameTable");
+        this.initializedEvenListeners = false;
     }
     areMatricesEqual(matrix1, matrix2) {
-    
         for (let i = 0; i < matrix1.length; i++) {
             if (matrix1[i].length !== matrix2[i].length) return false;
-    
+
             for (let j = 0; j < matrix1[i].length; j++) {
                 if (matrix1[i][j] !== matrix2[i][j]) return false;
             }
         }
-    
+
         return true;
     }
-    
+
     async fetchSolution(algorithm, initial_state) {
         const url = `https://pyzzlebackend1.onrender.com/game/start-game/${algorithm}`;
 
@@ -64,7 +64,7 @@ class CreateGame {
             if (this.areMatricesEqual(initial_state, this.initialState)) {
                 return;
             }
-    
+
             this.isPlaying = true;
             this.loading = true;
             const startBtn = document.getElementById("startBtn");
@@ -76,7 +76,6 @@ class CreateGame {
             endSimulationBtn.textContent = "Loading ...";
             this.overlay.style.visibility = "visible";
             this.overlay.classList.add("loading-overlay");
-    
 
             let response = await fetch(url, {
                 method: "POST",
@@ -85,19 +84,19 @@ class CreateGame {
                 },
                 body: JSON.stringify({ initial_state }),
             });
-    
+
             if (!response.ok) {
                 console.error("Failed to fetch solution", response.statusText);
                 return;
             }
-    
+
             endSimulationBtn.innerHTML = "Zaustavi simulaciju";
             endSimulationBtn.classList.remove("loading");
             this.overlay.style.visibility = "hidden";
             this.overlay.classList.remove("loading-overlay");
-    
+
             const data = await response.json();
-    
+
             if (data.steps === 0) {
                 startBtn.classList.remove("loading");
                 endSimulationBtn.classList.remove("loading");
@@ -107,11 +106,11 @@ class CreateGame {
                 startBtn.textContent = "Pokreni igru";
                 return;
             }
-    
+
             this.simulationStarted = true;
             this.isPlaying = false;
             this.toggleOverlay();
-    
+
             this.scoreBoard.style.display = "flex";
             this.loading = false;
             this.aiSteps = data.steps;
@@ -131,11 +130,11 @@ class CreateGame {
             console.log(exception);
         }
     }
-    
+
     controls = (event) => {
         if (!this.simulationStarted) return;
 
-        if (event.code === "Space" || event.type =="click") {
+        if (event.code === "Space" || event.type == "click") {
             endSimulationBtn.disabled = !this.isPlaying;
             this.simulationInterval = 1000;
             this.isPlaying = !this.isPlaying;
@@ -233,8 +232,10 @@ class CreateGame {
 
     initializeEventListeners() {
         const fields = document.querySelectorAll(".field");
+        this.initializedEvenListeners = true;
         fields.forEach((field) => {
             field.addEventListener("click", (e) => {
+                console.log(this.isPlaying);
                 if (!this.isPlaying) {
                     const classList = Array.from(e.target.classList);
                     const posClass = classList.find((className) =>
@@ -246,6 +247,12 @@ class CreateGame {
                     }
                 }
             });
+        });
+    }
+    removeEventListeners() {
+        const fields = document.querySelectorAll(".field");
+        fields.forEach((field) => {
+            field.removeEventListener("click", this.handleFieldClick);
         });
     }
 
@@ -311,7 +318,7 @@ class CreateGame {
         const modal = document.createElement("div");
         modal.classList.add("modal");
         const successMessage = document.createElement("p");
-        successMessage.innerHTML = "Čestitamo! <br> Rešili ste puzzle!";
+        successMessage.innerHTML = "Congrats! <br> You solved puzzle!";
 
         modal.appendChild(successMessage);
 
@@ -391,7 +398,9 @@ class CreateGame {
                 field.classList.add(`pos-${i}-${j}`);
             }
         }
-        this.initializeEventListeners();
+        if (!this.initializedEvenListeners) {
+            this.initializeEventListeners();
+        }
     }
     endSimulation() {
         this.simulationStarted = false;
