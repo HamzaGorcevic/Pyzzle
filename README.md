@@ -30,7 +30,7 @@ To run this project locally, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/pyzzle.git
+    git clone https://github.com/HamzaGorcevic/Pyzzle.git
     ```
 
 2. Open the project folder and open `index.html` in your browser.
