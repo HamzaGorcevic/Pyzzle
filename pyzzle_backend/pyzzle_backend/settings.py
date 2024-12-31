@@ -35,7 +35,7 @@ SECRET_KEY = 'django-insecure-8uc0^jj+pl^_$6ev90+4b+mldy+wxt)yiu8l2f6y%*=w5mo*+f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pyzzlebackend.onrender.com', 'pyzzle.onrender.com', 'localhost', '127.0.0.1','pyzzlebackend1.onrender.com']
+ALLOWED_HOSTS = ['pyzzlebackend.onrender.com', 'pyzzle.onrender.com', 'localhost', '127.0.0.1','pyzzlebackend1.onrender.com','pyzzle-production.up.railway.app']
 
 
 # Application definition
@@ -147,7 +147,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5500',
     'https://pyzzle.onrender.com',
     'https://pyzzlebackend.onrender.com',
-    'https://pyzzlebackend1.onrender.com'
+    'https://pyzzlebackend1.onrender.com',
+    'https://pyzzle-production.up.railway.app',
 
 ]
 
