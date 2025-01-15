@@ -12,7 +12,6 @@ def keep_alive(request):
 @csrf_exempt
 def start_game(request, algorithm, heuristic=None):
     if request.method == "POST":
-        goal_state = tuple([1,2,3,4,5,6,7,8,0])
         body = loads(request.body)
         if algorithm == "BFS":
             algo_instance = BFSAlgorithm()
@@ -22,7 +21,10 @@ def start_game(request, algorithm, heuristic=None):
             algo_instance = AStarAlgorithm(heuristic)
         else:
             return JsonResponse({"error": "Invalid algorithm."}, status=400)
+        
         start_state = tuple(item for row in body.get("initial_state") for item in row)
+        sorted_without_zero = sorted(x for x in start_state if x != 0)
+        goal_state = tuple(sorted_without_zero + [0])
         response, nodes_explored = algo_instance.get_steps(start_state, goal_state)
         return JsonResponse({"steps": response, "nodes_explored": nodes_explored})
     else:
