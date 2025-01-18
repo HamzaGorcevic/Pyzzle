@@ -252,7 +252,6 @@ class CreateGame {
     shuffleInitialState() {
         this.currentState = JSON.parse(JSON.stringify(this.initialState));
         let flatArray = this.currentState.flat();
-
         do {
             for (let i = flatArray.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -269,23 +268,24 @@ class CreateGame {
     }
 
     isSolvable(puzzle) {
+        const dimension = puzzle.length;
+        const flattened = puzzle.reduce((acc, row) => acc.concat(row), []);
+        const zeroPosition = flattened.indexOf(0);
+        const puzzleWithoutZero = flattened.filter((num) => num !== 0);
         let inversions = 0;
-        const zeroPosition = puzzle.indexOf(0);
-        const puzzleWithoutZero = puzzle.filter((num) => num !== 0);
-
-        for (let i = 0; i < puzzleWithoutZero.length - 1; i++) {
+        for (let i = 0; i < puzzleWithoutZero.length; i++) {
             for (let j = i + 1; j < puzzleWithoutZero.length; j++) {
                 if (puzzleWithoutZero[i] > puzzleWithoutZero[j]) {
                     inversions++;
                 }
             }
         }
-
-        if (this.dimension % 2 === 1) {
+        const zeroRow = Math.floor(zeroPosition / dimension);
+        const zeroRowFromBottom = dimension - 1 - zeroRow;
+        if (dimension % 2 === 1) {
             return inversions % 2 === 0;
         } else {
-            const zeroRow = Math.floor(zeroPosition / this.dimension);
-            return (inversions + zeroRow) % 2 === 0;
+            return (inversions + zeroRowFromBottom) % 2 === 0;
         }
     }
 
@@ -422,8 +422,8 @@ class CreateGame {
     async fetchSolution(algorithm) {
         if (this.loading) return;
 
-        // const url = `http://127.0.0.1:8000/game/start-game/${algorithm}`;
-        const url = `https://pyzzle-production.up.railway.app/game/start-game/${algorithm}`;
+        // const url = `http://127.0.0.1:8000/game/${algorithm}`;
+        const url = `https://pyzzle-production.up.railway.app/game/${algorithm}`;
 
         try {
             this.loading = true;
@@ -596,6 +596,10 @@ document.getElementById("startBtn").addEventListener("click", () => {
     const algorithm = document.querySelector(
         'input[name="algorithm"]:checked'
     ).value;
+    if (game.dimension > 3 && !algorithm.includes("bestfs")) {
+        alert("You cant select that option wiht this dimension");
+        return;
+    }
     game.callAlgorithm(algorithm);
 });
 

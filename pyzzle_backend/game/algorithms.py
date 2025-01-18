@@ -157,14 +157,13 @@ class BestFSAlgorithm(Algorithm):
         
         visited = set()
         visited.add(initial_state)  # Add the initial state as a tuple
-        
         nodes_explored = 0
         try:
             while queue:
+                
                 self.check_timeout()
                 h, current_state, path = heapq.heappop(queue)
                 nodes_explored += 1
-
                 if current_state == goal_state:
                     return (path, nodes_explored)
 
@@ -175,8 +174,8 @@ class BestFSAlgorithm(Algorithm):
                         heapq.heappush(queue, (new_h,new_state, path + [action]))
                         visited.add(new_state)  # Add the new state to the visited set
         except TimeoutError:
-            print(f"A-STAR timed out after {10} seconds. Explored {nodes_explored} nodes.")
-            return ([], nodes_explored)
+            print(f"Bestfs timed out after {10} seconds. Explored {nodes_explored} nodes.")
+            return (path, nodes_explored)
         return ([], nodes_explored)  # return ([], nodes_explored) if no solution is found
 
 import heapq
