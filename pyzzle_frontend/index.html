@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Puzzle Game</title>
-        <link rel="stylesheet" href="./style.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Hubot+Sans:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet" />
-    </head>
-    <body>
-        <div class="container">
-            <div class="game-controls">
-                <div class="select-container">
-                    <select id="selectDimension">
-                        <option value="" disabled selected>Choose dimension</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option  value="4">4</option>
-                        <option  value="5">5</option>
-                    </select>
-                </div>
-                <div class="image-container">
-                    <label for="imageUpload"><span>Upload your image</span></label>
-                    <input type="file" id="imageUpload"/>
-                </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Puzzle Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hubot+Sans:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Puzzle Game</h2>
+            <p>Configure your game settings</p>
+        </div>
+
+        <div class="control-section">
+            <h3>Game Settings</h3>
+            <div class="select-container">
+                <label for="selectDimension">Select Dimension:</label>
+                <select id="selectDimension">
+                    <option value="" disabled selected>Choose dimension</option>
+                    <option value="2">2x2</option>
+                    <option value="3">3x3</option>
+                    <option value="4">4x4</option>
+                    <option value="5">5x5</option>
+                </select>
             </div>
-            <div class="containerSteps"></div>
-            <div class="gameTable">
-                <div id="overlay">
-                    <div class="loading-spinner"></div>
-                    <p>Press space to continue</p>
-                    <p>Press enter to finish</p>
-                    <img id="playStopButton" src="./assets/images/play.png" alt="Play Button" />
-                </div>
-            </div>
-            <div class="score">
-                <p>Moves left: <span id="movesLeft"></span></p>
-                <p>Nodes explored: <span id="nodesExplored"></span></p>
-            </div>
-            <h3>Choose algorithm:</h3>
+            
+            <label for="imageUpload"><span>Upload Custom Image</span></label>
+            <input type="file" id="imageUpload"/>
+        </div>
+
+        <div class="control-section algorithm-section">
+            <h3>Choose Algorithm:</h3>
             <label class="radio-container">
                 <input type="radio" name="algorithm" value="bfs" checked />
                 <span class="custom-radio"></span>
@@ -51,7 +52,6 @@
                 <span class="custom-radio"></span>
                 Best-First Search Manhattan
             </label>
-   
             <label class="radio-container">
                 <input type="radio" name="algorithm" value="bestfs-hamming" />
                 <span class="custom-radio"></span>
@@ -72,10 +72,37 @@
                 <span class="custom-radio"></span>
                 A* Linear Conflicts
             </label>
+        </div>
+
+        <div class="control-section">
+            <h3>Game Controls</h3>
             <button id="startBtn"><span>Start Game</span></button>
             <button id="shuffleBtn"><span>Shuffle Board</span></button>
             <button id="endSimulationBtn"><span>Stop Simulation</span></button>
         </div>
-        <script src="./app.js"></script>
-    </body>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container" id="mainContainer">
+        <div class="containerSteps"></div>
+        
+        <div class="game-centered">
+            <div class="gameTable">
+                <div id="overlay">
+                    <div class="loading-spinner"></div>
+                    <p>Press space to continue</p>
+                    <p>Press enter to finish</p>
+                    <img id="playStopButton" src="./assets/images/play.png" alt="Play Button" />
+                </div>
+            </div>
+            
+            <div class="score">
+                <p>Moves left: <span id="movesLeft"></span></p>
+                <p>Nodes explored: <span id="nodesExplored"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
 </html>

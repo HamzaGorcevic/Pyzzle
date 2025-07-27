@@ -1,3 +1,49 @@
+// Sidebar toggle functionality
+const sidebarToggle = document.getElementById("sidebarToggle");
+const sidebar = document.getElementById("sidebar");
+const mainContainer = document.getElementById("mainContainer");
+const toggleIcon = sidebarToggle.querySelector("i");
+
+sidebarToggle.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    sidebarToggle.classList.toggle("open");
+
+    if (window.innerWidth > 768) {
+        mainContainer.classList.toggle("sidebar-open");
+    }
+
+    // Change icon
+    if (sidebar.classList.contains("open")) {
+        toggleIcon.className = "fas fa-times";
+    } else {
+        toggleIcon.className = "fas fa-bars";
+    }
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener("click", (e) => {
+    if (
+        window.innerWidth <= 768 &&
+        !sidebar.contains(e.target) &&
+        !sidebarToggle.contains(e.target) &&
+        sidebar.classList.contains("open")
+    ) {
+        sidebar.classList.remove("open");
+        sidebarToggle.classList.remove("open");
+        toggleIcon.className = "fas fa-bars";
+    }
+});
+
+// Handle window resize
+window.addEventListener("resize", () => {
+    if (window.innerWidth <= 768) {
+        mainContainer.classList.remove("sidebar-open");
+    } else if (sidebar.classList.contains("open")) {
+        mainContainer.classList.add("sidebar-open");
+    }
+});
+
+// Your existing game logic starts here
 class CreateGame {
     constructor() {
         this.domFields = [];
@@ -69,24 +115,18 @@ class CreateGame {
     createPuzzlePieces(imageSrc) {
         return new Promise((resolve) => {
             const img = new Image();
+            img.crossOrigin = "anonymous";
             img.onload = () => {
-                // Create a temporary canvas for the full image
                 const tempCanvas = document.createElement("canvas");
                 const tempCtx = tempCanvas.getContext("2d");
-
-                // Fixed size for the puzzle
-                const size = 500; // Match the gameTable size
+                const size = 500;
                 tempCanvas.width = size;
                 tempCanvas.height = size;
-
-                // Draw the image stretched to fill the entire canvas
                 tempCtx.drawImage(img, 0, 0, size, size);
 
-                // Extract dominant colors
                 const imageData = tempCtx.getImageData(0, 0, size, size).data;
                 const colorCounts = {};
 
-                // Sample every 10th pixel for performance
                 for (let i = 0; i < imageData.length; i += 40) {
                     const r = imageData[i];
                     const g = imageData[i + 1];
@@ -95,13 +135,11 @@ class CreateGame {
                     colorCounts[rgb] = (colorCounts[rgb] || 0) + 1;
                 }
 
-                // Get top 5 colors
                 const dominantColors = Object.entries(colorCounts)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5)
                     .map(([color]) => `rgb(${color})`);
 
-                // Update CSS variables
                 document.documentElement.style.setProperty(
                     "--primary-color",
                     dominantColors[0]
@@ -123,36 +161,23 @@ class CreateGame {
                     dominantColors[3] || dominantColors[1] || dominantColors[0]
                 );
 
-                // Set gameTable background
                 this.gameTable.style.backgroundImage = `url(${imageSrc})`;
                 this.gameTable.style.backgroundSize = "cover";
                 this.gameTable.style.backgroundPosition = "center";
 
-                // Create canvas for individual pieces
                 const pieceCanvas = document.createElement("canvas");
                 const pieceCtx = pieceCanvas.getContext("2d");
-
-                // Calculate piece dimensions
                 const pieceSize = Math.floor(size / this.dimension);
                 pieceCanvas.width = pieceSize;
                 pieceCanvas.height = pieceSize;
 
-                // Store pieces in enumImages
                 this.enumImages = { 0: "none" };
-
-                // Total number of pieces (dimension × dimension)
                 const totalPieces = this.dimension * this.dimension;
 
-                // Create all pieces
                 for (let i = 0; i < totalPieces; i++) {
-                    // Calculate x and y positions
                     const row = Math.floor(i / this.dimension);
                     const col = i % this.dimension;
-
-                    // Clear the piece canvas
                     pieceCtx.clearRect(0, 0, pieceSize, pieceSize);
-
-                    // Draw the piece
                     pieceCtx.drawImage(
                         tempCanvas,
                         col * pieceSize,
@@ -164,13 +189,10 @@ class CreateGame {
                         pieceSize,
                         pieceSize
                     );
-
                     if (i < totalPieces - 1) {
-                        // Skip the last piece (will be empty)
                         this.enumImages[i + 1] = pieceCanvas.toDataURL();
                     }
                 }
-
                 resolve();
             };
 
@@ -189,7 +211,6 @@ class CreateGame {
             .substring(4, bgColor.length - 1)
             .split(",")
             .map(Number);
-
         const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
         return luminance > 0.5 ? "rgb(0,0,0)" : "rgb(255,255,255)";
     }
@@ -205,30 +226,30 @@ class CreateGame {
         const percentage = (100 / this.dimension).toFixed(2);
 
         let styles = `
-            .field {
-                width: calc(${percentage}% - 2px);
-                height: calc(${percentage}% - 2px);
-                background-position: center;
-                background-size: cover;
-                background-repeat: no-repeat;
-                margin: 1px;
-                border: 1px solid #2f4f2f;
-                position: absolute;
-                transition: left 0.3s ease, top 0.3s ease;
-                top: 0;
-                left: 0;
-                box-sizing: border-box;
-            }
-        `;
+                    .field {
+                        width: calc(${percentage}% - 2px);
+                        height: calc(${percentage}% - 2px);
+                        background-position: center;
+                        background-size: cover;
+                        background-repeat: no-repeat;
+                        margin: 1px;
+                        border: 1px solid #2f4f2f;
+                        position: absolute;
+                        transition: left 0.3s ease, top 0.3s ease;
+                        top: 0;
+                        left: 0;
+                        box-sizing: border-box;
+                    }
+                `;
 
         for (let i = 0; i < this.dimension; i++) {
             for (let j = 0; j < this.dimension; j++) {
                 styles += `
-                    .field.pos-${i}-${j} {
-                        left: ${percentage * j}%;
-                        top: ${percentage * i}%;
-                    }
-                `;
+                            .field.pos-${i}-${j} {
+                                left: ${percentage * j}%;
+                                top: ${percentage * i}%;
+                            }
+                        `;
             }
         }
 
@@ -422,7 +443,6 @@ class CreateGame {
     async fetchSolution(algorithm) {
         if (this.loading) return;
 
-        // const url = `http://127.0.0.1:8000/game/${algorithm}`;
         const url = `https://pyzzle-production.up.railway.app/game/${algorithm}`;
 
         try {
@@ -597,7 +617,7 @@ document.getElementById("startBtn").addEventListener("click", () => {
         'input[name="algorithm"]:checked'
     ).value;
     if (game.dimension > 3 && !algorithm.includes("bestfs")) {
-        alert("You cant select that option wiht this dimension");
+        alert("You cant select that option with this dimension");
         return;
     }
     game.callAlgorithm(algorithm);
